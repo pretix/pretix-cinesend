@@ -1,0 +1,5 @@
+recursive-include pretix_cinesend/static *
+recursive-include pretix_cinesend/templates *
+recursive-include pretix_cinesend/locale *
+include LICENSE
+exclude .gitlab-ci.yml
