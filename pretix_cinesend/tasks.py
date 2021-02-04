@@ -61,7 +61,7 @@ def create_pass(self, event, op_id):
             "apiKey": event.settings.cinesend_api_key,
             "name": op.attendee_name or "Ticket customer",
             "email": op.attendee_email or op.order.email,
-            "sendEmail": True,
+            "sendEmail": "1",
             "subscriberTypeIDs": subscribertype_id,
         },
     )
