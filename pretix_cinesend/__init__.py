@@ -22,7 +22,7 @@ class PluginApp(PluginConfig):
         compatibility = "pretix>=3.14.0"
 
     def ready(self):
-        from . import signals  # NOQA
+        from . import signals, tasks  # NOQA
 
 
 default_app_config = "pretix_cinesend.PluginApp"
