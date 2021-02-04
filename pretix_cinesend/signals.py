@@ -1,8 +1,11 @@
 import copy
 from django.db import transaction
+from django.db.models import Q
 from django.dispatch import receiver
+from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import ugettext_lazy as _
+from pretix.base.models import Order
 from pretix.base.signals import (
     event_copy_data,
     item_copy_data,
@@ -10,6 +13,7 @@ from pretix.base.signals import (
     order_paid,
 )
 from pretix.control.signals import item_forms, nav_event_settings
+from pretix.presale.signals import order_info_top, position_info_top
 
 from .forms import ItemProductForm
 from .models import ItemProduct
@@ -87,3 +91,66 @@ def pretixcontrol_logentry_display(sender, logentry, **kwargs):
         return _("A CineSend pass was created.")
     if logentry.action_type == "pretix_cinesend.fail":
         return _("A CineSend operation failed.")
+
+
+def get_cinesend_status(qs):
+    lines = []
+    for pos in qs.select_related(
+        "item", "item__cinesend_product", "variation"
+    ).prefetch_related("cinesend_vouchers", "cinesend_passes"):
+        try:
+            if pos.item.cinesend_product.asset_id:
+                vouchers = [v for v in pos.cinesend_vouchers.all() if v.active]
+                lines.append(
+                    {
+                        "position": pos,
+                        "type": "voucher",
+                        "vouchers": vouchers,
+                    }
+                )
+            if pos.item.cinesend_product.subscribertype_id:
+                passes = [v for v in pos.cinesend_passes.all() if v.active]
+                lines.append(
+                    {
+                        "position": pos,
+                        "type": "pass",
+                        "passes": passes,
+                    }
+                )
+        except ItemProduct.DoesNotExist:
+            pass
+    return lines
+
+
+@receiver(signal=order_info_top, dispatch_uid="cinesend_order_info_top")
+def presale_o_i(sender, request, order, **kwargs):
+    if order.status != Order.STATUS_PAID:
+        return ""
+    status = get_cinesend_status(order.positions.all())
+    if status:
+        template = get_template("pretix_cinesend/order_info.html")
+        ctx = {
+            "order": order,
+            "event": sender,
+            "lines": status,
+        }
+        return template.render(ctx, request=request)
+    return ""
+
+
+@receiver(signal=position_info_top, dispatch_uid="cinesend_pos_info_top")
+def presale_op_i(sender, request, order, position, **kwargs):
+    if order.status != Order.STATUS_PAID:
+        return ""
+    status = get_cinesend_status(
+        order.positions.filter(Q(pk=position.pk) | Q(addon_to_id=position.pk))
+    )
+    if status:
+        template = get_template("pretix_cinesend/order_info.html")
+        ctx = {
+            "order": order,
+            "event": sender,
+            "lines": status,
+        }
+        return template.render(ctx, request=request)
+    return ""

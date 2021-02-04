@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load eventurl %}
+{% load rich_text %}
+{% load safelink %}
+{% load bootstrap3 %}
+{% load static %}
+<div class="panel panel-primary digital-content">
+    <div class="panel-heading">
+        <h3 class="panel-title">
+            {% trans "Your platform access" %}
+        </h3>
+    </div>
+    <ul class="list-group">
+        {% for line in lines %}
+            <li class="list-group-item">
+                <h4>
+                    {{ line.position.item.name }}
+                    {% if line.position.variation %}
+                        – {{ line.position.variation }}
+                    {% endif %}
+                    {% if line.position.attendee_name %}
+                        <small>{{ line.position.attendee_name }}</small>
+                    {% endif %}
+                </h4>
+                {% if line.type == "voucher" %}
+                    {% if not line.vouchers %}
+                        {% trans "Your access voucher is currently being created, please refresh the page in a few minutes." %}
+                    {% else %}
+                        {% for v in line.vouchers %}
+                            <a href="{{ v.url }}" target="_blank" class="btn btn-success btn-lg">
+                                <span class="fa fa-film"></span> {% trans "Watch now" %}
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                {% elif line.type == "pass" %}
+                    {% if not line.passes %}
+                        {% trans "Your access pass is currently being created, please refresh the page in a few minutes." %}
+                    {% else %}
+                        {% for v in line.passes %}
+                            <a href="{{ v.invite_url }}" target="_blank" class="btn btn-success btn-lg">
+                                <span class="fa fa-ticket"></span> {% trans "Create account" %}
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
