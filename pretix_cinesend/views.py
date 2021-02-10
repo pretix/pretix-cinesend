@@ -1,9 +1,11 @@
 import logging
 from django import forms
+from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from pretix.base.forms import SecretKeySettingsField, SettingsForm
 from pretix.base.models import Event
+from pretix.control.signals import subevent_forms
 from pretix.control.views.event import EventSettingsFormView, EventSettingsViewMixin
 
 logger = logging.getLogger(__name__)

@@ -13,10 +13,14 @@ logger = logging.getLogger(__name__)
 def create_voucher(self, event, op_id):
     op = (
         OrderPosition.objects.select_for_update()
-        .select_related("order", "item", "item__cinesend_product")
+        .select_related("order", "item", "item__cinesend_product", "subevent__cinesend_product")
         .get(pk=op_id)
     )
-    asset_id = op.item.cinesend_product.asset_id
+    if op.subevent:
+        if hasattr(op.subevent, 'cinesend_product'):
+            asset_id = op.subevent.cinesend_product.asset_id
+    else:
+        asset_id = op.item.cinesend_product.asset_id
 
     if op.cinesend_vouchers.filter(active=True).exists():
         return
@@ -90,8 +94,17 @@ def sync_order(self, event, order_id):
         return
 
     for pos in order.positions.select_related("item", "item__cinesend_product"):
+        has_asset = False
         try:
-            if pos.item.cinesend_product.asset_id:
+            has_asset = pos.item.cinesend_product.asset_id
+        except:
+            pass
+        try:
+            has_asset = has_asset or pos.subevent.cinesend_product.asset_id
+        except:
+            pass
+        try:
+            if has_asset:
                 create_voucher.apply_async(args=(event.pk, pos.pk))
             if pos.item.cinesend_product.subscribertype_id:
                 create_pass.apply_async(args=(event.pk, pos.pk))

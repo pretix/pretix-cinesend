@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import ItemProduct
+from .models import ItemProduct, SubEventProduct
 
 
 class ItemProductForm(forms.ModelForm):
@@ -28,3 +28,31 @@ class ItemProductForm(forms.ModelForm):
                 return
         else:
             return super().save(commit=commit)
+
+
+class SubEventProductForm(forms.ModelForm):
+    class Meta:
+        model = SubEventProduct
+        fields = ["asset_id"]
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("event")
+        super().__init__(*args, **kwargs)
+        self.fields["asset_id"].required = False
+        self.fields["asset_id"].widget.is_required = False
+
+    def save(self, commit=True):
+        self.instance.subevent = self.subevent
+        if self.cleaned_data["asset_id"] is None:
+            if self.instance.pk:
+                self.instance.delete()
+            else:
+                return
+        else:
+            SubEventProduct.objects.update_or_create(
+                subevent=self.subevent,
+                defaults={
+                    'asset_id': self.cleaned_data['asset_id']
+                }
+            )

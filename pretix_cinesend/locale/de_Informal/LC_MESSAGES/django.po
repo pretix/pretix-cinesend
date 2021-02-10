@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-07 19:01+0100\n"
+"POT-Creation-Date: 2021-02-05 09:38+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: pretix team\n"
 "Language-Team: \n"
@@ -10,3 +10,73 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: pretix_cinesend/__init__.py:16 pretix_cinesend/signals.py:32
+#: pretix_cinesend/templates/pretix_cinesend/settings.html:5
+#: pretix_cinesend/templates/pretix_cinesend/settings.html:10
+msgid "CineSend"
+msgstr ""
+
+#: pretix_cinesend/__init__.py:18
+msgid "Connects pretix to CineSend"
+msgstr ""
+
+#: pretix_cinesend/models.py:9
+msgid "CineSend Asset ID"
+msgstr ""
+
+#: pretix_cinesend/models.py:11
+msgid "CineSend SubscriberType ID"
+msgstr ""
+
+#: pretix_cinesend/signals.py:89
+msgid "A CineSend voucher was created."
+msgstr ""
+
+#: pretix_cinesend/signals.py:91
+msgid "A CineSend pass was created."
+msgstr ""
+
+#: pretix_cinesend/signals.py:93
+msgid "A CineSend operation failed."
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/order_info.html:10
+msgid "Your platform access"
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/order_info.html:27
+msgid ""
+"Your access voucher is currently being created, please refresh the page in a "
+"few minutes."
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/order_info.html:31
+msgid "Watch now"
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/order_info.html:37
+msgid ""
+"Your access pass is currently being created, please refresh the page in a "
+"few minutes."
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/order_info.html:41
+msgid "Create account"
+msgstr ""
+
+#: pretix_cinesend/templates/pretix_cinesend/settings.html:16
+msgid "Save"
+msgstr ""
+
+#: pretix_cinesend/views.py:14
+msgid "Environment"
+msgstr ""
+
+#: pretix_cinesend/views.py:16
+msgid "Production"
+msgstr ""
+
+#: pretix_cinesend/views.py:17
+msgid "Staging"
+msgstr ""

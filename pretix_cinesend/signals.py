@@ -1,10 +1,12 @@
 import copy
+
 from django.db import transaction
 from django.db.models import Q
 from django.dispatch import receiver
 from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import ugettext_lazy as _
+
 from pretix.base.models import Order
 from pretix.base.signals import (
     event_copy_data,
@@ -12,11 +14,10 @@ from pretix.base.signals import (
     logentry_display,
     order_paid,
 )
-from pretix.control.signals import item_forms, nav_event_settings
+from pretix.control.signals import item_forms, nav_event_settings, subevent_forms
 from pretix.presale.signals import order_info_top, position_info_top
-
-from .forms import ItemProductForm
-from .models import ItemProduct
+from .forms import ItemProductForm, SubEventProductForm
+from .models import ItemProduct, SubEventProduct
 from .tasks import sync_order
 
 
@@ -24,7 +25,7 @@ from .tasks import sync_order
 def navbar_info(sender, request, **kwargs):
     url = resolve(request.path_info)
     if not request.user.has_event_permission(
-        request.organizer, request.event, "can_change_event_settings", request=request
+            request.organizer, request.event, "can_change_event_settings", request=request
     ):
         return []
     return [
@@ -96,10 +97,19 @@ def pretixcontrol_logentry_display(sender, logentry, **kwargs):
 def get_cinesend_status(qs):
     lines = []
     for pos in qs.select_related(
-        "item", "item__cinesend_product", "variation"
+            "item", "item__cinesend_product", "variation", "subevent__cinesend_product"
     ).prefetch_related("cinesend_vouchers", "cinesend_passes"):
+        has_asset = False
         try:
-            if pos.item.cinesend_product.asset_id:
+            has_asset = pos.item.cinesend_product.asset_id
+        except:
+            pass
+        try:
+            has_asset = has_asset or pos.subevent.cinesend_product.asset_id
+        except:
+            pass
+        try:
+            if has_asset:
                 vouchers = [v for v in pos.cinesend_vouchers.all() if v.active]
                 lines.append(
                     {
@@ -154,3 +164,27 @@ def presale_op_i(sender, request, order, position, **kwargs):
         }
         return template.render(ctx, request=request)
     return ""
+
+
+@receiver(subevent_forms, dispatch_uid="cinesend_subevent_form")
+def subevent_form(sender, request, subevent, copy_from, **kwargs):
+    initial = None
+    if copy_from:
+        try:
+            initial = {'asset_id': copy_from.cinesend_product.asset_id}
+        except:
+            pass
+
+    try:
+        inst = SubEventProduct.objects.get(subevent=subevent)
+    except SubEventProduct.DoesNotExist:
+        inst = SubEventProduct(subevent=subevent)
+    return [
+        SubEventProductForm(
+            instance=inst,
+            event=sender,
+            data=(request.POST if request.method == "POST" else None),
+            initial=initial,
+            prefix="cinesendproduct",
+        )
+    ]
