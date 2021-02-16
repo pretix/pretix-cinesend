@@ -12,13 +12,12 @@ logger = logging.getLogger(__name__)
 @app.task(base=EventTask, bind=True, max_retries=10, default_retry_delay=20)
 def create_voucher(self, event, op_id):
     op = (
-        OrderPosition.objects.select_for_update()
+        OrderPosition.objects
         .select_related("order", "item", "item__cinesend_product", "subevent__cinesend_product")
         .get(pk=op_id)
     )
-    if op.subevent:
-        if hasattr(op.subevent, 'cinesend_product'):
-            asset_id = op.subevent.cinesend_product.asset_id
+    if op.subevent and hasattr(op.subevent, 'cinesend_product'):
+        asset_id = op.subevent.cinesend_product.asset_id
     else:
         asset_id = op.item.cinesend_product.asset_id
 
