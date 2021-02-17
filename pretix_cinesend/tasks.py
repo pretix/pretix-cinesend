@@ -16,7 +16,7 @@ def create_voucher(self, event, op_id):
         .select_related("order", "item", "item__cinesend_product", "subevent__cinesend_product")
         .get(pk=op_id)
     )
-    if op.subevent and hasattr(op.subevent, 'cinesend_product'):
+    if op.subevent and hasattr(op.subevent, 'cinesend_product') and op.subevent.cinesend_product.asset_id:
         asset_id = op.subevent.cinesend_product.asset_id
     else:
         asset_id = op.item.cinesend_product.asset_id
