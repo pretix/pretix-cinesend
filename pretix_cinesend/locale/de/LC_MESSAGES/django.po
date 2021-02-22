@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-05 09:38+0100\n"
+"POT-Creation-Date: 2021-02-22 10:47+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: pretix team\n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: pretix_cinesend/__init__.py:16 pretix_cinesend/signals.py:32
+#: pretix_cinesend/__init__.py:16 pretix_cinesend/signals.py:33
 #: pretix_cinesend/templates/pretix_cinesend/settings.html:5
 #: pretix_cinesend/templates/pretix_cinesend/settings.html:10
 msgid "CineSend"
@@ -21,23 +21,27 @@ msgstr ""
 msgid "Connects pretix to CineSend"
 msgstr ""
 
-#: pretix_cinesend/models.py:9
+#: pretix_cinesend/models.py:9 pretix_cinesend/models.py:17
 msgid "CineSend Asset ID"
 msgstr ""
 
-#: pretix_cinesend/models.py:11
+#: pretix_cinesend/models.py:10
+msgid "Has precedence over any values set on product level"
+msgstr ""
+
+#: pretix_cinesend/models.py:19
 msgid "CineSend SubscriberType ID"
 msgstr ""
 
-#: pretix_cinesend/signals.py:89
+#: pretix_cinesend/signals.py:90
 msgid "A CineSend voucher was created."
 msgstr ""
 
-#: pretix_cinesend/signals.py:91
+#: pretix_cinesend/signals.py:92
 msgid "A CineSend pass was created."
 msgstr ""
 
-#: pretix_cinesend/signals.py:93
+#: pretix_cinesend/signals.py:94
 msgid "A CineSend operation failed."
 msgstr ""
 
@@ -69,14 +73,14 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: pretix_cinesend/views.py:14
+#: pretix_cinesend/views.py:16
 msgid "Environment"
 msgstr ""
 
-#: pretix_cinesend/views.py:16
+#: pretix_cinesend/views.py:18
 msgid "Production"
 msgstr ""
 
-#: pretix_cinesend/views.py:17
+#: pretix_cinesend/views.py:19
 msgid "Staging"
 msgstr ""
