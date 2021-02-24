@@ -92,7 +92,10 @@ def sync_order(self, event, order_id):
     if not event.settings.cinesend_api_key:
         return
 
-    for pos in order.positions.select_related("item", "item__cinesend_product"):
+    qs = order.positions.select_related("item", "item__cinesend_product")
+    if event.settings.cinesend_exclude_addons:
+        qs = qs.filter(addon_to__isnull=True)
+    for pos in qs:
         has_asset = False
         try:
             has_asset = pos.item.cinesend_product.asset_id

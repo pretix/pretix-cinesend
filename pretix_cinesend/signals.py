@@ -94,11 +94,14 @@ def pretixcontrol_logentry_display(sender, logentry, **kwargs):
         return _("A CineSend operation failed.")
 
 
-def get_cinesend_status(qs):
+def get_cinesend_status(event, qs):
     lines = []
-    for pos in qs.select_related(
-            "item", "item__cinesend_product", "variation", "subevent__cinesend_product"
-    ).prefetch_related("cinesend_vouchers", "cinesend_passes"):
+    qs = qs.select_related(
+        "item", "item__cinesend_product", "variation", "subevent__cinesend_product"
+    ).prefetch_related("cinesend_vouchers", "cinesend_passes")
+    if event.settings.cinesend_exclude_addons:
+        qs = qs.filter(addon_to__isnull=True)
+    for pos in qs:
         has_asset = False
         try:
             has_asset = pos.item.cinesend_product.asset_id
@@ -136,7 +139,7 @@ def get_cinesend_status(qs):
 def presale_o_i(sender, request, order, **kwargs):
     if order.status != Order.STATUS_PAID:
         return ""
-    status = get_cinesend_status(order.positions.all())
+    status = get_cinesend_status(sender, order.positions.all())
     if status:
         template = get_template("pretix_cinesend/order_info.html")
         ctx = {
@@ -153,6 +156,7 @@ def presale_op_i(sender, request, order, position, **kwargs):
     if order.status != Order.STATUS_PAID:
         return ""
     status = get_cinesend_status(
+        sender,
         order.positions.filter(Q(pk=position.pk) | Q(addon_to_id=position.pk))
     )
     if status:

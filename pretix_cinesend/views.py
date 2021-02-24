@@ -23,6 +23,10 @@ class CinesendSettingsForm(SettingsForm):
         label="API Key",
         required=False,
     )
+    cinesend_exclude_addons = forms.BooleanField(
+        label=_('Exclude add-on products'),
+        required=False,
+    )
 
 
 class SettingsView(EventSettingsViewMixin, EventSettingsFormView):
