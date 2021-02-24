@@ -27,6 +27,10 @@ class CinesendSettingsForm(SettingsForm):
         label=_('Exclude add-on products'),
         required=False,
     )
+    cinesend_voucher_landingpage = forms.BooleanField(
+        label=_('Use landing page URL for vouchers'),
+        required=False,
+    )
 
 
 class SettingsView(EventSettingsViewMixin, EventSettingsFormView):

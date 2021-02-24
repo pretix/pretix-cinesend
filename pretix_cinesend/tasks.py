@@ -30,6 +30,7 @@ def create_voucher(self, event, op_id):
             "apiKey": event.settings.cinesend_api_key,
             "orderID": "{}-{}".format(op.order.full_code, op.positionid),
             "contentID": asset_id,
+            "landingPage": "true" if event.settings.cinesend_voucher_landingpage else "false",
         },
     )
     r.raise_for_status()
