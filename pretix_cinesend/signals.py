@@ -71,7 +71,7 @@ def copy_item(sender, source, target, **kwargs):
 
 @receiver(signal=event_copy_data, dispatch_uid="cinesend_copy_data")
 def event_copy_data_receiver(sender, other, question_map, item_map, **kwargs):
-    for ip in ItemProduct.objects.fitler(item__event=other):
+    for ip in ItemProduct.objects.filter(item__event=other):
         ip = copy.copy(ip)
         ip.pk = None
         ip.event = sender
