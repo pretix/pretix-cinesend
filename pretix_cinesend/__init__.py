@@ -15,7 +15,8 @@ class PluginApp(PluginConfig):
     class PretixPluginMeta:
         name = gettext_lazy("CineSend")
         author = "pretix team"
-        description = gettext_lazy("Connects pretix to CineSend")
+        description = gettext_lazy("Automatically grant access to your CineSend event to your customers.")
+        picture = "pretix_cinesend/logo.svg"
         visible = True
         version = __version__
         category = "INTEGRATION"

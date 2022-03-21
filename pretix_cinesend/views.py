@@ -2,7 +2,7 @@ import logging
 from django import forms
 from django.dispatch import receiver
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from pretix.base.forms import SecretKeySettingsField, SettingsForm
 from pretix.base.models import Event
 from pretix.control.signals import subevent_forms
