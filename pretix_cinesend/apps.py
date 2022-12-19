@@ -8,6 +8,7 @@ except ImportError:
 
 
 class PluginApp(PluginConfig):
+    default = True
     name = "pretix_cinesend"
     verbose_name = "CineSend"
 
