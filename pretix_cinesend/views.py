@@ -1,11 +1,9 @@
 import logging
 from django import forms
-from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from pretix.base.forms import SecretKeySettingsField, SettingsForm
 from pretix.base.models import Event
-from pretix.control.signals import subevent_forms
 from pretix.control.views.event import EventSettingsFormView, EventSettingsViewMixin
 
 logger = logging.getLogger(__name__)
@@ -24,11 +22,11 @@ class CinesendSettingsForm(SettingsForm):
         required=False,
     )
     cinesend_exclude_addons = forms.BooleanField(
-        label=_('Exclude add-on products'),
+        label=_("Exclude add-on products"),
         required=False,
     )
     cinesend_voucher_landingpage = forms.BooleanField(
-        label=_('Use landing page URL for vouchers'),
+        label=_("Use landing page URL for vouchers"),
         required=False,
     )
 

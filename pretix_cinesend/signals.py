@@ -1,12 +1,10 @@
 import copy
-
 from django.db import transaction
 from django.db.models import Q
 from django.dispatch import receiver
 from django.template.loader import get_template
 from django.urls import resolve, reverse
 from django.utils.translation import gettext_lazy as _
-
 from pretix.base.models import Order
 from pretix.base.signals import (
     event_copy_data,
@@ -16,6 +14,7 @@ from pretix.base.signals import (
 )
 from pretix.control.signals import item_forms, nav_event_settings, subevent_forms
 from pretix.presale.signals import order_info_top, position_info_top
+
 from .forms import ItemProductForm, SubEventProductForm
 from .models import ItemProduct, SubEventProduct
 from .tasks import sync_order
@@ -25,7 +24,7 @@ from .tasks import sync_order
 def navbar_info(sender, request, **kwargs):
     url = resolve(request.path_info)
     if not request.user.has_event_permission(
-            request.organizer, request.event, "can_change_event_settings", request=request
+        request.organizer, request.event, "can_change_event_settings", request=request
     ):
         return []
     return [
@@ -105,11 +104,11 @@ def get_cinesend_status(event, qs):
         has_asset = False
         try:
             has_asset = pos.item.cinesend_product.asset_id
-        except:
+        except Exception:
             pass
         try:
             has_asset = has_asset or pos.subevent.cinesend_product.asset_id
-        except:
+        except Exception:
             pass
         try:
             if has_asset:
@@ -156,8 +155,7 @@ def presale_op_i(sender, request, order, position, **kwargs):
     if order.status != Order.STATUS_PAID:
         return ""
     status = get_cinesend_status(
-        sender,
-        order.positions.filter(Q(pk=position.pk) | Q(addon_to_id=position.pk))
+        sender, order.positions.filter(Q(pk=position.pk) | Q(addon_to_id=position.pk))
     )
     if status:
         template = get_template("pretix_cinesend/order_info.html")
@@ -175,8 +173,8 @@ def subevent_form(sender, request, subevent, copy_from, **kwargs):
     initial = None
     if copy_from:
         try:
-            initial = {'asset_id': copy_from.cinesend_product.asset_id}
-        except:
+            initial = {"asset_id": copy_from.cinesend_product.asset_id}
+        except Exception:
             pass
 
     try:

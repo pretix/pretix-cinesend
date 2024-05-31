@@ -52,7 +52,5 @@ class SubEventProductForm(forms.ModelForm):
         else:
             SubEventProduct.objects.update_or_create(
                 subevent=self.subevent,
-                defaults={
-                    'asset_id': self.cleaned_data['asset_id']
-                }
+                defaults={"asset_id": self.cleaned_data["asset_id"]},
             )

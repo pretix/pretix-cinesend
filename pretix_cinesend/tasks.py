@@ -11,12 +11,14 @@ logger = logging.getLogger(__name__)
 
 @app.task(base=EventTask, bind=True, max_retries=10, default_retry_delay=20)
 def create_voucher(self, event, op_id):
-    op = (
-        OrderPosition.objects
-        .select_related("order", "item", "item__cinesend_product", "subevent__cinesend_product")
-        .get(pk=op_id)
-    )
-    if op.subevent and hasattr(op.subevent, 'cinesend_product') and op.subevent.cinesend_product.asset_id:
+    op = OrderPosition.objects.select_related(
+        "order", "item", "item__cinesend_product", "subevent__cinesend_product"
+    ).get(pk=op_id)
+    if (
+        op.subevent
+        and hasattr(op.subevent, "cinesend_product")
+        and op.subevent.cinesend_product.asset_id
+    ):
         asset_id = op.subevent.cinesend_product.asset_id
     else:
         asset_id = op.item.cinesend_product.asset_id
@@ -30,7 +32,9 @@ def create_voucher(self, event, op_id):
             "apiKey": event.settings.cinesend_api_key,
             "orderID": "{}-{}".format(op.order.full_code, op.positionid),
             "contentID": asset_id,
-            "landingPage": "true" if event.settings.cinesend_voucher_landingpage else "false",
+            "landingPage": (
+                "true" if event.settings.cinesend_voucher_landingpage else "false"
+            ),
         },
     )
     r.raise_for_status()
@@ -100,11 +104,11 @@ def sync_order(self, event, order_id):
         has_asset = False
         try:
             has_asset = pos.item.cinesend_product.asset_id
-        except:
+        except Exception:
             pass
         try:
             has_asset = has_asset or pos.subevent.cinesend_product.asset_id
-        except:
+        except Exception:
             pass
         try:
             if has_asset:

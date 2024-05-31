@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy
+
 from . import __version__
 
 try:
@@ -15,7 +16,9 @@ class PluginApp(PluginConfig):
     class PretixPluginMeta:
         name = gettext_lazy("CineSend")
         author = "pretix team"
-        description = gettext_lazy("Automatically grant access to your CineSend event to your customers.")
+        description = gettext_lazy(
+            "Automatically grant access to your CineSend event to your customers."
+        )
         picture = "pretix_cinesend/logo.svg"
         visible = True
         version = __version__
@@ -24,4 +27,3 @@ class PluginApp(PluginConfig):
 
     def ready(self):
         from . import signals, tasks  # NOQA
-

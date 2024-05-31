@@ -6,8 +6,11 @@ class SubEventProduct(models.Model):
     subevent = models.OneToOneField(
         "pretixbase.SubEvent", related_name="cinesend_product", on_delete=models.CASCADE
     )
-    asset_id = models.CharField(max_length=200, verbose_name=_("CineSend Asset ID"),
-                                help_text=_("Has precedence over any values set on product level"))
+    asset_id = models.CharField(
+        max_length=200,
+        verbose_name=_("CineSend Asset ID"),
+        help_text=_("Has precedence over any values set on product level"),
+    )
 
 
 class ItemProduct(models.Model):
